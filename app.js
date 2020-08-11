@@ -124,11 +124,14 @@ const pool = mysql.createPool({
 
 //接收自定义规则多文件上传时的接口
 server.post('/drag',upload2.array('face'),(req,res)=>{
-  for(var n = 0; n < req.files.length;n++){
+  let sql = 'INSERT images(path) VALUES(?)';
+  for(let n = 0; n < req.files.length;n++){
     let file = req.files[n];
     let path = file.path.replace(/\\\\/g,'/');
-    path = path.substr(7);
-    console.log(path);
+    path = path.substr(7);  
+    pool.query(sql,[path],(err,results)=>{
+        if(err) throw err;
+    });
   }
   res.send("OK");
 });
