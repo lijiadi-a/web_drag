@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>拖动上传</title>
+	<link rel="stylesheet" type="text/css" href="styles/reset.css">
+	<style>
+		body {
+			font-family: Roboto, sans-serif;
+			color: #0f3c4b;
+			background-color: #e5edf1;
+			padding: 20px;
+		}
+
+		.container {
+			width: 100%;
+			max-width: 680px;
+			text-align: center;
+			margin: 0 auto;
+		}
+
+		#drop-region {
+			position: relative;
+			background-color: #fff;
+			border-radius: 5px;
+			box-shadow: 0 0 35px rgba(0, 0, 0, 0.05);
+			padding: 60px 40px;
+			text-align: center;
+			cursor: pointer;
+			transition: .3s;
+		}
+
+		#progress {
+			position: absolute;
+			left: 0;
+			top: 50%;
+			width: 0;
+			height: 5px;
+			background: #f00;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div id="drop-region">
+			拖动上传
+			<div id="progress"></div>
+		</div>
+	</div>
+	<script src="scripts/axios.min.js"></script>
+	<script>
+		//获取目标对象
+		let targetEle = document.getElementById('drop-region');
+		//为目标对象添加dragover事件
+		targetEle.ondragover = (event) => {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+
+		//为目标对象添加drop事件
+		targetEle.ondrop = (event) => {
+			event.stopPropagation();
+			event.preventDefault()
+			//将返回FileList对象
+			let filelist = event.dataTransfer.files;
+			//创建FormData对象(想像成HTML中的表单)
+			let form = new FormData();
+			//如果FileList对象包含的File对象数量超过1个,
+			//则依次添加到FormData对象中
+			if (filelist.length >= 1) {
+				for (var n = 0; n < filelist.length; n++) {
+					//在HTML中的<form>中添加了多个
+					//<input type="file" name="face">
+					form.append('face',filelist[n]);
+				}
+				//发送请求
+				axios.post('http://127.0.0.1:3000/drag',form);
+			}
+		}
+	</script>
+</body>
+
+</html>
